@@ -50,7 +50,6 @@ if (isset($_POST['login']) && isset($_POST['password'])) {
         if (isset($_SESSION['valid_user'])) {
             header('Location: todo.php');
             exit();
-//            echo '<a href ="logout.php">Выход</a><br/>';
         } else {
             if (!isset($login)) {
                 echo 'Вы не вошли в систему.';

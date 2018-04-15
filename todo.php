@@ -81,27 +81,71 @@ if (isset($_POST['assigned_user_id'])) {
                             <a href='todo.php?isdoneid=<?= $row['id'] ?>'>Выполнить</a>
                             <a href='todo.php?id=<?= $row['id'] ?>'>Удалить</a>
                         </td>
-                        <td><?php if(isset($row['login']))
-                            echo $row['login'];
-                        else                            echo 'Вы';?></td>
+                        <td><?php
+                            if (isset($row['login']))
+                                echo $row['login'];
+                            else
+                                echo 'Вы';
+                            ?></td>
                         <td><?= $username ?></td>
                         <td><form method="POST">
                                 <select name="assigned_user_id">
-                                    <?php foreach ($userList as $user): ?> 
+    <?php foreach ($userList as $user): ?> 
                                         <option value="<?= $user['id'] ?>"><?= $user['login'] ?></option>                            
-                                    <?php endforeach; ?>
+    <?php endforeach; ?>
                                 </select>
                                 <input type = "hidden" name = "id" value = "<?= $row['id'] ?>">
                                 <input type='submit' name='assign' value='Переложить ответственность' />
                             </form>
                         </td>
                     </tr>
-                <?php endforeach; ?>
+<?php endforeach; ?>
+            </tbody>
+        </table>
+
+        <p><strong>Также, посмотрите, что от Вас требуют другие люди:</strong></p>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Описание задачи</th>
+                    <th>Дата добавления</th>
+                    <th>Статус</th>
+                    <th>Действие</th>
+                    <th>Ответственный</th>
+                    <th>Автор</th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php
+                $result = $db_conn->query("SELECT task.id, user_id, description, user.login, date_added,is_done FROM task LEFT JOIN user ON task.user_id=user.id WHERE task.assigned_user_id='$userid'");
+                foreach ($result as $row):
+                    ?>
+                    <tr>
+                        <td><?= $row['description'] ?></td>
+                        <td><?= $row['date_added'] ?></td>
+                        <td><?=
+                        ($row['is_done'] == 0) ?
+                                '<span style="color: red;">В процессе</span>' : '<span style="color: green;">Выполнено</span>';
+                        ?></td>
+                        <td>
+                            <a href='todo.php?isdoneid=<?= $row['id'] ?>'>Выполнить</a>
+                            <a href='todo.php?id=<?= $row['id'] ?>'>Удалить</a>
+                        </td>
+                        <td><?= $username ?></td>
+                        <td><?php
+                    if (isset($row['login']))
+                        echo $row['login'];
+                    else
+                        echo 'Вы';
+                    ?></td>
+                    </tr>
+        <?php endforeach; ?>
             </tbody>
         </table>    
 
-        <?php
-        echo '<a href ="logout.php">Выход</a><br/>';
-        ?>
+<?php
+echo '<a href ="logout.php">Выход</a><br/>';
+?>
     </body>
 </html>
