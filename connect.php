@@ -1,5 +1,5 @@
 <?php
-$db_conn = new mysqli('localhost', 'root', '', 'base');
+$db_conn = new mysqli('localhost', 'igaev', 'neto1673', 'igaev');
 $db_conn->set_charset("utf8");
 
 if (mysqli_connect_errno()) {
