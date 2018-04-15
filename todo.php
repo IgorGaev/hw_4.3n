@@ -11,8 +11,8 @@ if (!isset($_SESSION['valid_user'])) {
 if (isset($_POST['description'])) {
     $description = strip_tags($_POST['description']);
     $date_added = $_POST['date'];
-    $query = "INSERT INTO task(description, date_added, user_id, assigned_user_id)"
-            . " VALUES ('$description', '$date_added', '$userid', '')";
+    $query = "INSERT INTO task(description, date_added, user_id)"
+            . " VALUES ('$description', '$date_added', '$userid')";
     $db_conn->query($query);
 }
 
@@ -66,9 +66,8 @@ if (isset($_POST['assigned_user_id'])) {
             </thead>
             <tbody>
                 <?php
-                $result = $db_conn->query("SELECT * FROM task WHERE user_id='$userid'");
+                $result = $db_conn->query("SELECT task.id, user_id, description, user.login, date_added,is_done FROM task LEFT JOIN user ON task.assigned_user_id=user.id WHERE task.user_id='$userid'");
                 $userList = $db_conn->query("SELECT * FROM user");
-//                $fds = $db_conn->query("SELECT assigned_user_id, login FROM task INNER JOIN user ON task.assigned_user_id=user.id WHERE task.id=100");
                 foreach ($result as $row):
                     ?>
                     <tr>
@@ -82,9 +81,9 @@ if (isset($_POST['assigned_user_id'])) {
                             <a href='todo.php?isdoneid=<?= $row['id'] ?>'>Выполнить</a>
                             <a href='todo.php?id=<?= $row['id'] ?>'>Удалить</a>
                         </td>
-                        <td><?php if ($row['assigned_user_id'] !=0) 
-                            echo $row['assigned_user_id'];
-                            else                                echo 'Вы';?></td>
+                        <td><?php if(isset($row['login']))
+                            echo $row['login'];
+                        else                            echo 'Вы';?></td>
                         <td><?= $username ?></td>
                         <td><form method="POST">
                                 <select name="assigned_user_id">
@@ -99,7 +98,7 @@ if (isset($_POST['assigned_user_id'])) {
                     </tr>
                 <?php endforeach; ?>
             </tbody>
-        </table>     
+        </table>    
 
         <?php
         echo '<a href ="logout.php">Выход</a><br/>';
